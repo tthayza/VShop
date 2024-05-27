@@ -2,81 +2,75 @@
 using VShop.ProductApi.DTO;
 using VShop.ProductApi.Services;
 
-namespace VShop.ProductApi.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-public class ProductsController : ControllerBase
+namespace VShop.ProductApi.Controllers
 {
-
-    private readonly IProductService _productService;
-    public ProductsController(IProductService productService)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProductsController : ControllerBase
     {
-        _productService = productService;
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<ProductDTO>>> Get()
-    {
-        var productsDto = await _productService.GetProducts();
-        if (productsDto == null)
+        private readonly IProductService _productService;
+        public ProductsController(IProductService productService)
         {
-            return NotFound("Products not found.");
+            _productService = productService;
         }
-        return Ok(productsDto);
-    }
-
-    [HttpGet("{id:int}", Name = "GetProduct")]
-    public async Task<ActionResult<ProductDTO>> Get(int id)
-    {
-        var productDto = await _productService.GetProductById(id);
-        if (productDto == null)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> Get()
         {
-            return NotFound("Product not found.");
-        }
-        return Ok(productDto);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> Post([FromBody] ProductDTO productDto)
-    {
-        if (productDto == null)
-        {
-            return BadRequest("Invalid data.");
-        }
-        await _productService.AddProduct(productDto);
-
-        return new CreatedAtRouteResult("GetProduct",
-            new { id = productDto.Id }, productDto);
-    }
-
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult> Put(int id, [FromBody] ProductDTO productDto)
-    {
-        if (id != productDto.Id)
-        {
-            return BadRequest("Invalid data.");
+            var produtosDto = await _productService.GetProducts();
+            if (produtosDto == null)
+            {
+                return NotFound("Products not found");
+            }
+            return Ok(produtosDto);
         }
 
-        if (productDto == null)
+        [HttpGet("{id}", Name = "GetProduct")]
+        public async Task<ActionResult<ProductDTO>> Get(int id)
         {
-            return BadRequest("Invalid data.");
+            var produtoDto = await _productService.GetProductById(id);
+            if (produtoDto == null)
+            {
+                return NotFound("Product not found");
+            }
+            return Ok(produtoDto);
         }
 
-        await _productService.UpdateProduct(productDto);
-
-        return Ok(productDto);
-    }
-
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult<ProductDTO>> Delete(int id)
-    {
-        var productDto = await _productService.GetProductById(id);
-        if (productDto == null)
+        [HttpPost]
+        public async Task<ActionResult> Post([FromBody] ProductDTO produtoDto)
         {
-            return NotFound("Product not found.");
+            if (produtoDto == null)
+                return BadRequest("Data Invalid");
+
+            await _productService.AddProduct(produtoDto);
+
+            return new CreatedAtRouteResult("GetProduct",
+                new { id = produtoDto.Id }, produtoDto);
         }
-        await _productService.RemoveProduct(id);
-        return Ok(productDto);
+
+        [HttpPut()]
+        public async Task<ActionResult> Put([FromBody] ProductDTO produtoDto)
+        {
+            if (produtoDto == null)
+                return BadRequest("Data invalid");
+
+            await _productService.UpdateProduct(produtoDto);
+
+            return Ok(produtoDto);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ProductDTO>> Delete(int id)
+        {
+            var produtoDto = await _productService.GetProductById(id);
+
+            if (produtoDto == null)
+            {
+                return NotFound("Product not found");
+            }
+
+            await _productService.RemoveProduct(id);
+
+            return Ok(produtoDto);
+        }
     }
 }

@@ -1,28 +1,28 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using VShop.ProductApi.DTO;
 using VShop.ProductApi.Services;
 
-namespace VShop.ProductApi.Controller
+namespace VShop.ProductApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
+
         public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDTO>>> Get() 
-        { 
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> Get()
+        {
             var categoriesDto = await _categoryService.GetCategories();
-            if (categoriesDto == null)
-            {
-                return NotFound("Categories not found.");
-            }
+
+            if (categoriesDto is null)
+                return NotFound("Categories not found");
+
             return Ok(categoriesDto);
         }
 
@@ -32,47 +32,41 @@ namespace VShop.ProductApi.Controller
             var categoriesDto = await _categoryService.GetCategoriesProducts();
             if (categoriesDto == null)
             {
-                return NotFound("Categories not found.");
+                return NotFound("Categories not found");
             }
             return Ok(categoriesDto);
         }
 
-        [HttpGet("{id:int}", Name="GetCategory")]
+        [HttpGet("{id:int}", Name = "GetCategory")]
         public async Task<ActionResult<CategoryDTO>> Get(int id)
         {
             var categoryDto = await _categoryService.GetCategoryById(id);
             if (categoryDto == null)
             {
-                return NotFound("Category not found.");
+                return NotFound("Category not found");
             }
             return Ok(categoryDto);
         }
-
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CategoryDTO categoryDto)
         {
             if (categoryDto == null)
-            {
-                return BadRequest("Invalid data.");
-            }
+                return BadRequest("Invalid Data");
+
             await _categoryService.AddCategory(categoryDto);
 
-            return new CreatedAtRouteResult("GetCategory", 
-                new { id = categoryDto.CategoryId }, categoryDto);
+            return new CreatedAtRouteResult("GetCategory", new { id = categoryDto.CategoryId },
+                categoryDto);
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromBody] CategoryDTO categoryDto)
         {
             if (id != categoryDto.CategoryId)
-            {
                 return BadRequest();
-            }
 
-            if (categoryDto == null)
-            {
+            if (categoryDto is null)
                 return BadRequest();
-            }
 
             await _categoryService.UpdateCategory(categoryDto);
 
@@ -83,11 +77,13 @@ namespace VShop.ProductApi.Controller
         public async Task<ActionResult<CategoryDTO>> Delete(int id)
         {
             var categoryDto = await _categoryService.GetCategoryById(id);
-            if(categoryDto == null)
+            if (categoryDto == null)
             {
-                return NotFound("Category not found.");
+                return NotFound("Category not found");
             }
+
             await _categoryService.RemoveCategory(id);
+
             return Ok(categoryDto);
         }
     }
