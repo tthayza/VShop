@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using VShopWeb.Models;
 using VShopWeb.Services.Contracts;
@@ -16,11 +17,11 @@ namespace VShopWeb.Services
             _clientFactory = clientFactory;
             _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
-        public async Task<IEnumerable<CategoryViewModel>> GetAllCategories()
+        public async Task<IEnumerable<CategoryViewModel>> GetAllCategories(string token)
         {
             var client = _clientFactory.CreateClient("ProductApi");
             IEnumerable<CategoryViewModel> categories;
-
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",  token);
             using (var response = await client.GetAsync(apiEndpoint))
             {
                 if (response.IsSuccessStatusCode)
