@@ -1,5 +1,6 @@
-﻿namespace VShopCartApi.Models;
+﻿using VShopCartApi.Models;
 
+namespace VShop.CartApi.Models;
 
 public class Cart
 {

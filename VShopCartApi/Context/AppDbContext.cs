@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VShopCartApi.Models;
 
-namespace VShopCartApi.Context;
+namespace VShop.CartApi.Context;
 
 public class AppDbContext : DbContext 
 {

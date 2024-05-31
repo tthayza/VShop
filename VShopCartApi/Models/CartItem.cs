@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Headers;
-
-namespace VShopCartApi.Models;
+﻿namespace VShopCartApi.Models;
 
 public class CartItem
 {
@@ -8,7 +6,7 @@ public class CartItem
     public int Quantity { get; set; } = 1;
     public int ProductId { get; set; }
     public int CartHeaderId { get; set; }
-    public Product product { get; set; } = new Product();
-    public CartHeader CartHeader { get; set; } = new CartHeader();
+    public Product Product { get; set; } = new Product();
+    //public CartHeader CartHeader { get; set; } = new CartHeader();
 
 }

@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using VShopCartApi.Context;
+using VShop.CartApi.Context;
+using VShop.CartApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "VShop.CartApi", Version = "v1" });
@@ -40,11 +43,16 @@ builder.Services.AddSwaggerGen(c =>
          }
     });
 });
+
 var mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
+                  options.UseMySql(mySqlConnection,
+                    ServerVersion.AutoDetect(mySqlConnection)));
 
-    options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -54,15 +62,16 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority =
-            builder.Configuration["VShop.IdentityServer:ApplicationUrl"];
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
-    });
+       .AddJwtBearer("Bearer", options =>
+       {
+           options.Authority =
+             builder.Configuration["VShop.IdentityServer:ApplicationUrl"];
+
+           options.TokenValidationParameters = new TokenValidationParameters
+           {
+               ValidateAudience = false
+           };
+       });
 
 builder.Services.AddAuthorization(options =>
 {
@@ -72,7 +81,6 @@ builder.Services.AddAuthorization(options =>
         policy.RequireClaim("scope", "vshop");
     });
 });
-
 
 var app = builder.Build();
 
@@ -84,9 +92,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors("CorsPolicy");
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();

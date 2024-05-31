@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VShop.ProductApi", "VShop.ProductApi\VShop.ProductApi.csproj", "{7DCE3D4E-6D2D-453C-9668-2F2001DBF45D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VShopWeb", "VShopWeb\VShopWeb.csproj", "{6CA484AF-F0FC-4FC0-A251-F7D784F34818}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VShop.Web", "VShopWeb\VShop.Web.csproj", "{6CA484AF-F0FC-4FC0-A251-F7D784F34818}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{A4038677-F4CE-446A-BA31-57E2DD80AFF0}"
 EndProject
@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{F579
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VShop.IdentityServer", "VShop.IdentityServer\VShop.IdentityServer.csproj", "{97087B1E-C65E-46F2-88AB-A1534D031C57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VShopCartApi", "VShopCartApi\VShopCartApi.csproj", "{044A75E6-F474-40A8-98B2-9CDBB38AE68F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VShop.CartApi", "VShopCartApi\VShop.CartApi.csproj", "{044A75E6-F474-40A8-98B2-9CDBB38AE68F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -38,8 +38,8 @@ namespace VShop.ProductApi.Context
                       IsRequired();
 
             mb.Entity<Product>().
-               Property(c => c.Price).
-                 HasPrecision(12, 2);
+                Property(c => c.Price).
+                  HasPrecision(12, 2);
 
             mb.Entity<Category>()
               .HasMany(g => g.Products)
