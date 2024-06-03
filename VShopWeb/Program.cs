@@ -1,30 +1,14 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using VShop.Web.Services;
+using VShop.Web.Services.Contracts;
 using VShopWeb.Services;
 using VShopWeb.Services.Contracts;
-using VShop.Web.Services.Contracts;
-using VShop.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddHttpClient("ProductApi", c =>
-{
-    c.BaseAddress = new Uri(builder.Configuration["ServiceUri:ProductApi"]);
-    c.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
-    c.DefaultRequestHeaders.Add("Keep-Alive", "3600");
-    c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-ProductApi");
-});
-
-builder.Services.AddHttpClient<ICartService, CartService>("CartApi",
-    c => c.BaseAddress = new Uri(builder.Configuration["ServiceUri:CartApi"])
-);
-
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<ICartService, CartService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -67,8 +51,27 @@ builder.Services.AddAuthentication(options =>
     }
 );
 
+builder.Services.AddHttpClient<IProductService, ProductService>("ProductApi", c =>
+{
+    c.BaseAddress = new Uri(builder.Configuration["ServiceUri:ProductApi"]);
+    c.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
+    c.DefaultRequestHeaders.Add("Keep-Alive", "3600");
+    c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-ProductApi");
+});
 
+builder.Services.AddHttpClient<ICartService, CartService>("CartApi",
+    c => c.BaseAddress = new Uri(builder.Configuration["ServiceUri:CartApi"])
+);
 
+builder.Services.AddHttpClient<ICouponService, CouponService>("DiscountApi", c =>
+   c.BaseAddress = new Uri(builder.Configuration["ServiceUri:DiscountApi"])
+);
+
+builder.Services.AddScoped<ICouponService, CouponService>();
+
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 
@@ -80,8 +83,8 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

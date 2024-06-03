@@ -15,6 +15,22 @@ namespace VShop.CartApi.Controllers
             _repository = repository;
         }
 
+        [HttpPost("checkout")]
+        public async Task<ActionResult<CheckoutHeaderDTO>> Checkout(CheckoutHeaderDTO checkoutDto)
+        {
+            var cart = await _repository.GetCartByUserIdAsync(checkoutDto.UserId);
+
+            if (cart is null)
+            {
+                return NotFound($"Cart Not found for {checkoutDto.UserId}");
+            }
+
+            checkoutDto.CartItems = cart.CartItems;
+            checkoutDto.DateTime = DateTime.Now;
+
+            return Ok(checkoutDto);
+        }
+
         [HttpGet("getcart/{userid}")]
         public async Task<ActionResult<CartDTO>> GetByUserId(string userid)
         {
@@ -52,6 +68,29 @@ namespace VShop.CartApi.Controllers
             var status = await _repository.DeleteItemCartAsync(id);
             if (!status) return BadRequest();
             return Ok(status);
+        }
+
+        [HttpPost("applycoupon")]
+        public async Task<ActionResult<CartDTO>> ApplyCoupon(CartDTO cartDto)
+        {
+            var result = await _repository.ApplyCouponAsync(cartDto.CartHeader.UserId,
+                                                            cartDto.CartHeader.CouponCode);
+
+            if (!result)
+            {
+                return NotFound($"CartHeader not found for userId = {cartDto.CartHeader.UserId}");
+            }
+            return Ok(result);
+        }
+        [HttpDelete("deletecoupon/{userId}")]
+        public async Task<ActionResult<CartDTO>> DeleteCoupon(string userId)
+        {
+            var result = await _repository.DeleteCouponAsync(userId);
+            if (!result)
+            {
+                return NotFound($"Discount Coupon not found for userId = {userId}");
+            }
+            return Ok(result);
         }
     }
 }
